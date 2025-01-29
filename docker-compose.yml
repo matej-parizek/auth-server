@@ -1,20 +1,31 @@
-version: '3.7'
-
 services:
   db:
     image: mongo:latest
+    restart: always
     volumes:
       - mongo-data:/data/db
     ports:
       - "27017:27017"
+    hostname: db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoadmin
+      MONGO_INITDB_ROOT_PASSWORD: secret
     command: mongod --quiet --logpath /dev/null
 
   web:
     build:
       context: .
       dockerfile: Dockerfile
+    working_dir: /app
     ports:
       - "8080:8080"
+    depends_on:
+      - db
+    env_file:
+      - .env.local
+    volumes:
+      - gradle-cache:/root/.gradle
 
 volumes:
   mongo-data:
+  gradle-cache:

@@ -4,9 +4,14 @@ ktor:
       - com.parizmat.ApplicationKt.module
   deployment:
     port: 8080
+  development: true
 jwt:
-  domain: "https://jwt-provider-domain/"
-  audience: "jwt-audience"
+  domain: "http://localhost:8080"
+  audience: "users"
   issuer: "http://localhost:8080"
-
+  secret: "myJWTSecretKey123!@#$"
   realm: "ktor sample app"
+  expiration: 600000
+mongo:
+  uri: "mongodb://mongoadmin:secret@db:27017/?authSource=admin"
+  database: "mydatabase"

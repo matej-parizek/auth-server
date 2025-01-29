@@ -1,8 +1,7 @@
 package com.parizmat.service
 
-import com.parizmat.models.UserDao
 import arrow.core.Either
-import com.parizmat.models.User
+import com.parizmat.models.domain.User
 
 interface UserService {
     /**
@@ -13,7 +12,7 @@ interface UserService {
     /**
      * Sign in a user
      */
-    suspend fun signIn(user: User): Either<AuthError,String>
+    suspend fun signIn(user: User): Either<AuthError, String>
 }
 
 sealed interface AuthError {

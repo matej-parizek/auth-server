@@ -1,4 +1,4 @@
-package com.parizmat.models
+package com.parizmat.models.dao
 
 interface UserDao {
     /**
@@ -14,4 +14,9 @@ interface UserDao {
      * hash salt
      */
     val salt: String
+
+    /**
+     * Unique id
+     */
+    fun getId(): String
 }

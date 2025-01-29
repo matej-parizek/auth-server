@@ -2,6 +2,7 @@ package com.parizmat.controller.routing
 
 import arrow.core.Either
 import com.parizmat.controller.dto.AuthRequest
+import com.parizmat.controller.dto.AuthResponse
 import com.parizmat.controller.routing.authenticate
 import com.parizmat.mapper.toUser
 import com.parizmat.service.AuthError
@@ -22,12 +23,12 @@ fun Route.singUp(
            call.receive<AuthRequest>()
        }.onSuccess {
            if(it.username.isEmpty() || it.password.isEmpty()){
-               call.respond(HttpStatusCode.BadRequest, "Invalid request data")
+               call.respond(HttpStatusCode.BadRequest, "Invalid request data, username or password is empty")
                return@post
            }
            val wasKnowledge = service.signUp(it.toUser())
            if (!wasKnowledge) {
-               call.respond(HttpStatusCode.BadRequest, "Invalid request data")
+               call.respond(HttpStatusCode.BadRequest, "Invalid request data, wrong username or password")
                return@post
            }
            call.respond(HttpStatusCode.Created, "User created")
@@ -45,20 +46,20 @@ fun Route.singIn(
             call.receive<AuthRequest>()
         }.onSuccess {
             if(it.username.isEmpty() || it.password.isEmpty()){
-                call.respond(HttpStatusCode.BadRequest, "Invalid request data")
+                call.respond(HttpStatusCode.BadRequest, "Invalid request data, username or password is empty")
                 return@post
             }
             when (val response = service.signIn(it.toUser())){
-                is Either.Right -> call.respond(HttpStatusCode.OK, response.value)
+                is Either.Right -> call.respond(HttpStatusCode.OK, AuthResponse(response.value))
                 is Either.Left -> {
                     when(response.value){
                         is AuthError.UserNotFound -> call.respond(HttpStatusCode.NotFound, "User not found")
-                        is AuthError.PasswordIncorrect -> call.respond(HttpStatusCode.BadRequest, "Invalid request data")
+                        is AuthError.PasswordIncorrect -> call.respond(HttpStatusCode.Conflict, "Wrong password")
                     }
                 }
             }
         }.onFailure {
-            call.respond(HttpStatusCode.BadRequest, "Invalid request data: ${it.message}")
+            call.respond(HttpStatusCode.BadGateway, "Invalid request data: ${it.message}")
         }
     }
 }

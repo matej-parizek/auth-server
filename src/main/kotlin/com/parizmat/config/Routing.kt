@@ -8,12 +8,12 @@ import com.parizmat.service.UserService
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 
-fun Application.configureRouting(
-    user: UserService
+fun Application.routingConfig(
+    service: UserService
 ) {
     routing {
-        singIn(user)
-        singUp(user)
+        singIn(service)
+        singUp(service)
         authenticate()
         getSecretInfo()
     }

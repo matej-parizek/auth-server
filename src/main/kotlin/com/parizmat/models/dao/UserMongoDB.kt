@@ -1,4 +1,4 @@
-package com.parizmat.models
+package com.parizmat.models.dao
 
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
@@ -8,4 +8,7 @@ data class UserMongoDB(
     override val password: String,
     override val salt: String,
     @BsonId val id: ObjectId = ObjectId()
-) : UserDao
+
+) : UserDao {
+    override fun getId(): String = id.toString()
+}

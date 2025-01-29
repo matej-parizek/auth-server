@@ -1,7 +1,7 @@
 package com.parizmat.security.hash
 
-import com.parizmat.models.Hash
-import com.parizmat.models.SaltedHash
+import com.parizmat.models.domain.Hash
+import com.parizmat.models.domain.SaltedHash
 import org.apache.commons.codec.binary.Hex
 import org.apache.commons.codec.digest.DigestUtils
 import java.security.SecureRandom
@@ -11,10 +11,10 @@ class SHA256HashService(
 ) : HashService {
     override fun hash(password: String): Hash {
         val salt = SecureRandom.getInstance("SHA1PRNG").generateSeed(saltLength)
-        val hash = Hex.encodeHex(salt)
+        val hash = Hex.encodeHexString(salt)
         return SaltedHash(
-            DigestUtils.sha256Hex("$hash$password"),
-            String(hash)
+            hash = DigestUtils.sha256Hex("$hash$password"),
+            salt = hash
         )
     }
 

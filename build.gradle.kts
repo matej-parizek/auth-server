@@ -14,7 +14,7 @@ application {
     mainClass.set("io.ktor.server.netty.EngineMain")
 
 //    val isDevelopment: Boolean = project.ext.has("development")
-//    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=true")
 }
 
 repositories {
@@ -33,7 +33,7 @@ dependencies {
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     // MongoDB
-    implementation("org.litote.kmongo:kmongo:5.2.0")
+//    implementation("org.litote.kmongo:kmongo:5.2.0")
     implementation("org.litote.kmongo:kmongo-async:5.2.0")
     implementation("org.litote.kmongo:kmongo-coroutine:5.2.0")
     //Arrow

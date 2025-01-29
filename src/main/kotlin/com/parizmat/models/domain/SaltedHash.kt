@@ -1,4 +1,4 @@
-package com.parizmat.models
+package com.parizmat.models.domain
 
 data class SaltedHash(
     override val hash: String,

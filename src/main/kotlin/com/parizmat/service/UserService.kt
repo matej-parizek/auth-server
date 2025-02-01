@@ -7,7 +7,7 @@ interface UserService {
     /**
      * Sign up a new user
      */
-    suspend fun signUp(user: User): Boolean
+    suspend fun signUp(user: User): Either<AuthError,Unit>
 
     /**
      * Sign in a user
@@ -18,4 +18,5 @@ interface UserService {
 sealed interface AuthError {
     data object UserNotFound: AuthError
     data object PasswordIncorrect: AuthError
+    data object UsernameAlreadyExists: AuthError
 }

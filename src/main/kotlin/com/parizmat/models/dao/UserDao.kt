@@ -18,5 +18,5 @@ interface UserDao {
     /**
      * Unique id
      */
-    fun getId(): String
+    val id: String
 }

@@ -1,6 +1,7 @@
 package com.parizmat.controller.routing
 
 import arrow.core.Either
+import arrow.core.raise.result
 import com.parizmat.controller.dto.AuthRequest
 import com.parizmat.controller.dto.AuthResponse
 import com.parizmat.controller.routing.authenticate
@@ -26,12 +27,16 @@ fun Route.singUp(
                call.respond(HttpStatusCode.BadRequest, "Invalid request data, username or password is empty")
                return@post
            }
-           val wasKnowledge = service.signUp(it.toUser())
-           if (!wasKnowledge) {
-               call.respond(HttpStatusCode.BadRequest, "Invalid request data, wrong username or password")
-               return@post
+
+           return@post when(val result = service.signUp(it.toUser())) {
+               is Either.Right -> call.respond(HttpStatusCode.Created, "User created")
+               is Either.Left -> when(result.value){
+                   is AuthError.UserNotFound -> call.respond(HttpStatusCode.NotFound, "User not found")
+                   is AuthError.UsernameAlreadyExists -> call.respond(HttpStatusCode.Conflict, "Username already exists")
+                   else -> call.respond(HttpStatusCode.InternalServerError, "Internal server error: ${result.value}")
+               }
            }
-           call.respond(HttpStatusCode.Created, "User created")
+
        }.onFailure {
            call.respond(HttpStatusCode.BadRequest, "Invalid request data: ${it.message}")
        }
@@ -49,14 +54,22 @@ fun Route.singIn(
                 call.respond(HttpStatusCode.BadRequest, "Invalid request data, username or password is empty")
                 return@post
             }
-            when (val response = service.signIn(it.toUser())){
-                is Either.Right -> call.respond(HttpStatusCode.OK, AuthResponse(response.value))
-                is Either.Left -> {
-                    when(response.value){
-                        is AuthError.UserNotFound -> call.respond(HttpStatusCode.NotFound, "User not found")
-                        is AuthError.PasswordIncorrect -> call.respond(HttpStatusCode.Conflict, "Wrong password")
+            try {
+                when (val response = service.signIn(it.toUser())) {
+                    is Either.Right -> call.respond(HttpStatusCode.OK, AuthResponse(response.value))
+                    is Either.Left -> {
+                        when (response.value) {
+                            is AuthError.UserNotFound -> call.respond(HttpStatusCode.NotFound, "User not found")
+                            is AuthError.PasswordIncorrect -> call.respond(HttpStatusCode.Conflict, "Wrong password")
+                            else -> call.respond(
+                                HttpStatusCode.InternalServerError,
+                                "Internal server error: ${response.value}"
+                            )
+                        }
                     }
                 }
+            }catch (e: Exception){
+                call.respond(HttpStatusCode.InternalServerError, "Internal server error: ${e.message}")
             }
         }.onFailure {
             call.respond(HttpStatusCode.BadGateway, "Invalid request data: ${it.message}")

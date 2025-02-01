@@ -1,7 +1,6 @@
 services:
   db:
     image: mongo:latest
-    restart: always
     volumes:
       - mongo-data:/data/db
     ports:
@@ -28,4 +27,5 @@ services:
 
 volumes:
   mongo-data:
+    driver: local
   gradle-cache:

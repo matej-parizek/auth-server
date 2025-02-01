@@ -7,8 +7,7 @@ data class UserMongoDB(
     override val username: String,
     override val password: String,
     override val salt: String,
-    @BsonId val id: ObjectId = ObjectId()
-
-) : UserDao {
-    override fun getId(): String = id.toString()
+    @BsonId val _id: ObjectId = ObjectId(),
+) : UserDao{
+    override val id: String = _id.toString()
 }

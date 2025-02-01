@@ -20,7 +20,7 @@ fun Application.module() {
     val db = KMongo.createClient(connectionString = System.getenv("mongo.uri"))
         .coroutine
         .getDatabase(System.getenv("mongo.database"))
-    val repo : UserRepository = UserRepositoryMongoDB(db)
+    val repo  = UserRepositoryMongoDB(db)
     val hashService = SHA256HashService()
     val tokenService = JwtTokenService()
     val userService = UserServiceImp(hashService, repo, tokenService)

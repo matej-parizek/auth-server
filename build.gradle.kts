@@ -8,6 +8,7 @@ val kotlinx_coroutines_version: String by project
 val commons_codec_version: String by project
 val kotest_version_bom: String by project
 val mongo_test_version: String by project
+val koin_version: String by project
 
 group = "com.parizmat"
 version = "0.1.0"
@@ -25,6 +26,12 @@ application{
 
 repositories {
     mavenCentral()
+}
+
+tasks.shadowJar {
+    manifest {
+        attributes["Main-Class"] = application.mainClass.get()
+    }
 }
 
 dependencies {
@@ -53,6 +60,12 @@ dependencies {
     // Testcontainers
     testImplementation("org.testcontainers:testcontainers:$mongo_test_version")
     testImplementation("org.testcontainers:mongodb:$mongo_test_version")
+
+    // Koin
+    implementation("io.insert-koin:koin-core:$koin_version")
+    implementation("io.insert-koin:koin-ktor:$koin_version")
+    testImplementation("io.insert-koin:koin-test:$koin_version")
+
 }
 
 tasks.withType<Test> {

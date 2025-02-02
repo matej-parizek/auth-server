@@ -1,48 +1,57 @@
+// Define property variables at the top
 val kotlin_version: String by project
+val ktor_version: String by project
+val arrow_version: String by project
+val kmongo_version: String by project
 val logback_version: String by project
-
-plugins {
-    kotlin("jvm") version "2.1.0"
-    id("io.ktor.plugin") version "3.0.3"
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.1.0"
-}
+val kotlinx_coroutines_version: String by project
+val commons_codec_version: String by project
+val kotest_version_bom: String by project
+val mongo_test_version: String by project
 
 group = "com.parizmat"
-version = "0.0.1"
+version = "0.1.0"
 
-application {
-    mainClass.set("io.ktor.server.netty.EngineMain")
 
-//    val isDevelopment: Boolean = project.ext.has("development")
-    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=true")
+plugins {
+    kotlin("jvm")
+    id("io.ktor.plugin")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
+
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation("io.ktor:ktor-server-core")
-    implementation("io.ktor:ktor-server-auth")
-    implementation("io.ktor:ktor-server-auth-jwt")
-    implementation("io.ktor:ktor-server-content-negotiation")
-    implementation("io.ktor:ktor-serialization-kotlinx-json")
-    implementation("io.ktor:ktor-server-netty")
+    implementation("io.ktor:ktor-server-core:$ktor_version")
+    implementation("io.ktor:ktor-server-auth:$ktor_version")
+    implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
+    implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+    implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
-    implementation("io.ktor:ktor-server-config-yaml")
-    // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    // MongoDB
-//    implementation("org.litote.kmongo:kmongo:5.2.0")
-    implementation("org.litote.kmongo:kmongo-async:5.2.0")
-    implementation("org.litote.kmongo:kmongo-coroutine:5.2.0")
-    //Arrow
-    implementation("io.arrow-kt:arrow-core:1.2.0")
-    implementation("io.arrow-kt:arrow-fx-coroutines:1.2.0")
-    // Security
-    implementation("commons-codec:commons-codec:1.17.2")
-    // Test
-    testImplementation("io.ktor:ktor-server-test-host")
+    implementation("io.ktor:ktor-server-config-yaml:$ktor_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
+    implementation("org.litote.kmongo:kmongo-async:$kmongo_version")
+    implementation("org.litote.kmongo:kmongo-coroutine:$kmongo_version")
+    implementation("io.arrow-kt:arrow-core:$arrow_version")
+    implementation("io.arrow-kt:arrow-fx-coroutines:$arrow_version")
+    implementation("commons-codec:commons-codec:$commons_codec_version")
+
+    testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 
+    // Kotest
+    testImplementation(platform("io.kotest:kotest-bom:$kotest_version_bom"))
+    testImplementation("io.kotest:kotest-runner-junit5")
+
+    // Testcontainers
+    testImplementation("org.testcontainers:testcontainers:$mongo_test_version")
+    testImplementation("org.testcontainers:mongodb:$mongo_test_version")
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }

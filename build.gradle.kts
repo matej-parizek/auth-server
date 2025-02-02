@@ -19,6 +19,9 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
 }
 
+application{
+    mainClass.set("com.parizmat.ApplicationKt")
+}
 
 repositories {
     mavenCentral()

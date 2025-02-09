@@ -9,6 +9,8 @@ val commons_codec_version: String by project
 val kotest_version_bom: String by project
 val mongo_test_version: String by project
 val koin_version: String by project
+val argon2_version: String by project
+val mockk_version: String by project
 
 group = "com.parizmat"
 version = "0.1.0"
@@ -49,13 +51,15 @@ dependencies {
     implementation("io.arrow-kt:arrow-core:$arrow_version")
     implementation("io.arrow-kt:arrow-fx-coroutines:$arrow_version")
     implementation("commons-codec:commons-codec:$commons_codec_version")
+    implementation("de.mkammerer:argon2-jvm:$argon2_version")
 
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 
     // Kotest
     testImplementation(platform("io.kotest:kotest-bom:$kotest_version_bom"))
-    testImplementation("io.kotest:kotest-runner-junit5")
+    testImplementation("io.kotest:kotest-runner-junit5:$kotest_version_bom")
+    testImplementation("io.kotest:kotest-assertions-core:$kotest_version_bom")
 
     // Testcontainers
     testImplementation("org.testcontainers:testcontainers:$mongo_test_version")
@@ -65,6 +69,9 @@ dependencies {
     implementation("io.insert-koin:koin-core:$koin_version")
     implementation("io.insert-koin:koin-ktor:$koin_version")
     testImplementation("io.insert-koin:koin-test:$koin_version")
+
+    //Mockk
+    testImplementation("io.mockk:mockk:${mockk_version}")
 
 }
 

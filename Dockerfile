@@ -1,25 +1,26 @@
-# Vytvoření obrazu gradle
+# Use a specific version of the Gradle image for reproducible builds
 FROM gradle:latest AS builder
 
-# Nastavení pracovního adresáře
+# Set working directory
 WORKDIR /app
 
-# Kopírování souborů pro ziskání konfigurace
+# Exclude unnecessary files using .dockerignore before copying
 COPY . .
 
-# Spuštění gradle pro vytvoření buildu
+# Execute Gradle build, skipping tests for faster builds
 RUN gradle clean build -x test
-# Vytvoření obrazu javy
+
+# Use a specific base image for the runtime
 FROM openjdk:21-slim-buster AS runtime
 
-# Nastavení pracovního adresáře
+# Set the working directory
 WORKDIR /app
 
-# Kopírování souborů pro spuštění aplikace
-COPY --from=builder /app/build/libs/*.jar /app/app.jar
+# Copy only the built JAR from the builder stage
+COPY --from=builder /app/build/libs/*.jar ./app.jar
 
-# Kopírování souborů pro ziskání konfigurace
-COPY --from=builder /app/src/main/resources/application.yaml /app/resources/
+# Copy configuration files directly into the correct location
+COPY --from=builder /app/src/main/resources/application.yaml ./resources/
 
-# Spuštění aplikace
-CMD ["java", "-jar", "/app/app.jar"]
+# Command to run the application
+CMD ["java", "-jar", "app.jar"]

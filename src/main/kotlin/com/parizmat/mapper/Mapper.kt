@@ -12,7 +12,6 @@ fun AuthRequest.toUser() = UserImp(
 )
 
 fun User.toUserDao(hash: Hash) = UserMongoDB(
-    username = username,
+    username = username.uppercase(),
     password = hash.hash,
-    salt = hash.salt
 )

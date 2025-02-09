@@ -1,10 +1,8 @@
 package com.parizmat.controller.routing
 
 import arrow.core.Either
-import arrow.core.raise.result
 import com.parizmat.controller.dto.AuthRequest
 import com.parizmat.controller.dto.AuthResponse
-import com.parizmat.controller.routing.authenticate
 import com.parizmat.mapper.toUser
 import com.parizmat.service.AuthError
 import com.parizmat.service.UserService
@@ -16,7 +14,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 
-fun Route.singUp(
+fun Route.signUp(
     service: UserService,
 ){
     post("/sign-up"){
@@ -43,7 +41,7 @@ fun Route.singUp(
     }
 }
 
-fun Route.singIn(
+fun Route.signIn(
     service: UserService,
 ){
     post("/sign-in"){

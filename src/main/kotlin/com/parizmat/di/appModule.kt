@@ -1,4 +1,5 @@
-package com.parizmat
+package com.parizmat.di
+
 import com.parizmat.repository.UserRepository
 import com.parizmat.repository.UserRepositoryMongoDB
 import com.parizmat.security.hash.ARGON2HashService
@@ -11,16 +12,11 @@ import org.koin.dsl.module
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
-import org.testcontainers.containers.MongoDBContainer
 
-val dependencyModule = module {
-    single<MongoDBContainer> { MongoDBContainer("mongo:latest").apply { start() } }
-
-    single<CoroutineDatabase> {
-        val mongoContainer = get<MongoDBContainer>()
-        KMongo.createClient(mongoContainer.replicaSetUrl).coroutine.getDatabase("test")
-    }
-
+val appModule = module {
+    single<CoroutineDatabase> { KMongo.createClient(connectionString = System.getenv("mongo.uri"))
+                    .coroutine
+                    .getDatabase(System.getenv("mongo.database")) }
     factory<UserRepository> { UserRepositoryMongoDB(get()) }
     factory<HashService> { ARGON2HashService() }
     factory<TokenService> { JwtTokenService() }

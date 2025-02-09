@@ -3,29 +3,21 @@ package com.parizmat
 import com.parizmat.config.routingConfig
 import com.parizmat.config.securityConfig
 import com.parizmat.config.serializationConfig
-import com.parizmat.repository.UserRepository
-import com.parizmat.repository.UserRepositoryMongoDB
-import com.parizmat.security.hash.SHA256HashService
-import com.parizmat.service.JwtTokenService
-import com.parizmat.service.UserServiceImp
+import com.parizmat.di.appModule
+import com.parizmat.service.UserService
 import io.ktor.server.application.*
-import org.litote.kmongo.reactivestreams.KMongo
-import org.litote.kmongo.coroutine.coroutine
-
+import org.koin.ktor.ext.inject
+import org.koin.ktor.plugin.Koin
 
 fun main(args: Array<String>) = io.ktor.server.netty.EngineMain.main(args)
 
 
 fun Application.module() {
-    val db = KMongo.createClient(connectionString = System.getenv("mongo.uri"))
-        .coroutine
-        .getDatabase(System.getenv("mongo.database"))
-    val repo  = UserRepositoryMongoDB(db)
-    val hashService = SHA256HashService()
-    val tokenService = JwtTokenService()
-    val userService = UserServiceImp(hashService, repo, tokenService)
-
+    install(Koin) {
+        modules(appModule)
+    }
     securityConfig()
     serializationConfig()
+    val userService: UserService by inject()
     routingConfig(userService)
 }

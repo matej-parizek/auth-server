@@ -10,10 +10,6 @@ interface UserDao {
      */
     val password: String
 
-    /**
-     * hash salt
-     */
-    val salt: String
 
     /**
      * Unique id

@@ -1,6 +1,5 @@
 package com.parizmat.models.domain
 
-data class SaltedHash(
+data class HashImp(
     override val hash: String,
-    override val salt: String
 ): Hash

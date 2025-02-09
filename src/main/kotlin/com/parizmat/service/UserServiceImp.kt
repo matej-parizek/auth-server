@@ -4,7 +4,7 @@ import com.parizmat.repository.UserRepository
 import com.parizmat.security.hash.HashService
 import arrow.core.Either
 import com.parizmat.mapper.toUserDao
-import com.parizmat.models.domain.SaltedHash
+import com.parizmat.models.domain.HashImp
 import com.parizmat.models.domain.TokenClaim
 import com.parizmat.models.domain.User
 
@@ -14,7 +14,7 @@ class UserServiceImp(
     private val tokenService: TokenService
 ) : UserService {
     override suspend fun signUp(user: User): Either<AuthError,Unit> {
-        repository.findUserByUsername(user.username)?.let {
+        repository.findUserByUsername(user.username.uppercase())?.let {
             return Either.Left(AuthError.UsernameAlreadyExists)
         }
         val hash = hashService.hash(user.password)
@@ -23,8 +23,8 @@ class UserServiceImp(
     }
 
     override suspend fun signIn(user: User): Either<AuthError,String> {
-        return repository.findUserByUsername(user.username)?.let { entity ->
-            val hash = SaltedHash(salt = entity.salt, hash =  entity.password)
+        return repository.findUserByUsername(user.username.uppercase())?.let { entity ->
+            val hash = HashImp( hash =  entity.password)
             return if (hashService.verify(user.password, hash)) {
                 Either.Right(tokenService.generateToken(
                     TokenClaim(
